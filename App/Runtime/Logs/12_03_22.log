@@ -1,0 +1,15 @@
+[ 2012-03-22T14:46:07+08:00 ] ERR: (ThinkException) Action:getLastsql您所请求的方法不存在！
+[ 2012-03-22T20:59:10+08:00 ] ERR: (ThinkException) 模板不存在[./App/Tpl/default/Repositories/creat.html]
+[ 2012-03-22T21:03:02+08:00 ] ERR: (ThinkException) 非法操作Reporitory
+[ 2012-03-22T21:14:27+08:00 ] ERR: (ThinkException) 非法操作Reporitory
+[ 2012-03-22T21:16:09+08:00 ] ERR: (ThinkException) 非法操作Reporitory
+[ 2012-03-22T21:16:44+08:00 ] ERR: (ThinkException) 非法操作Repository
+[ 2012-03-22T21:17:13+08:00 ] ERR: (ThinkException) 无法加载模块Repository
+[ 2012-03-22T21:17:46+08:00 ] ERR: (ThinkException) 无法加载模块Repository
+[ 2012-03-22T21:18:33+08:00 ] ERR: (ThinkException) 无法加载模块Repository
+[ 2012-03-22T21:18:34+08:00 ] ERR: (ThinkException) 无法加载模块Repository
+[ 2012-03-22T21:19:01+08:00 ] ERR: (ThinkException) 无法加载模块Repository
+[ 2012-03-22T21:20:34+08:00 ] ERR: (ThinkException) 非法操作Repository
+[ 2012-03-22T21:20:43+08:00 ] ERR: (ThinkException) 无法加载模块Repositories
+[ 2012-03-22T21:26:30+08:00 ] ERR: (ThinkException) 模板不存在[./App/Tpl/default/Repository/creat.html]
+[ 2012-03-22T22:22:46+08:00 ] ERR: (ThinkException) 非法数据对象！
