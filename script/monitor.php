@@ -14,9 +14,10 @@ $new_log = new Log(ROOT_PATH);
 $new_log->repoNum();
 $new_log->repoList();
 
-$commits = array();
-$trees = array();
-$blobs = array();
+$Objects = array();
+//$commits = array();
+//$trees = array();
+//$blobs = array();
 
 //反序列化日志对象
 if(file_exists(LOG)) {
@@ -54,15 +55,43 @@ if(file_exists(LOG)) {
 			
 			// 根据脚本返回结果 进行相应操作
 			$result = array();
-			exec("/bin/bash cat_file.sh $key $object 2",$result);
+			// exec("/bin/bash cat_file.sh $key $object 2",$result);
 
 			// 如果是commit 对象
 			if('commit' == $type[0]) {
-				$commits[] =  new commit($object,$result);
+
+				exec("/bin/bash cat_file.sh $key $object 2",$result);
+
+				// 获取根节点 及 主 tree
+				$root = new commit($object,$result);
+				$dir = new tree($root->getTree());
+
+				// 将主 tree 添加为子节点
+				$root->setKids($dir);
+
+				// 将 root 添加为 主 tree 的父节点
+				$dir->setFather($root);
+
+		/*
+		 *  Coding.....
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 *
+		 */
+				// $commits[] =  new commit($object,$result);
+				
 			}
 
 			// 如果是 tree 对象
-			elseif('tree' == $type[0]) {
+/*			elseif('tree' == $type[0]) {
 
 				$children = null;
 				foreach($result as $value) {
@@ -84,12 +113,14 @@ if(file_exists(LOG)) {
 
 				// 实例化 tree 对象
 				$trees[] = new tree($object,$children);
-			}
+}
+ */
 		}
 		next($changeList);
 	}
 
 	// 单例模式返回 db 对象 
+	/*
 	$con = db::getInstance();
 	foreach($commits as $commit) {
 		$commit->insert($con->getHandler());
@@ -101,10 +132,10 @@ if(file_exists(LOG)) {
 		$blob->insert($con->getHandler());
 	}
 	db::destory();
- 
-	print_r($commits);echo "<br/>-------------------------------------<br/>";
-	print_r($trees);echo  "<br/>-------------------------------------<br/>";
-	print_r($blobs);echo "<br/>-------------------------------------<br/>";
+	 */
+//	print_r($commits);echo "<br/>-------------------------------------<br/>";
+//	print_r($trees);echo  "<br/>-------------------------------------<br/>";
+//	print_r($blobs);echo "<br/>-------------------------------------<br/>";
 
 	//将改变记录到日志中
 	file_put_contents(LOG,serialize($new_log));

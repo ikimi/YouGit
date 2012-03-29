@@ -63,8 +63,8 @@ class commit {
 	// 构造函数，初始化
 	public function __construct($SHA_1,$message) {
 		$this->SHA_1 = $SHA_1;
-		$this->tree = $message[0];
-		$this->parent = $message[1];
+		$this->tree = substr($message[0],5);
+		$this->parent = substr($message[1],7);
 		$this->commit_msg = $message[5];
 	}
 
@@ -80,6 +80,11 @@ class commit {
 			return false;
 		}
 		return true;
+	}
+
+	// 获取 commit 对象字节点
+	public function getTree() {
+		return $this->tree;	
 	}
 
 	// 设置 commit 对象字节点
@@ -109,9 +114,9 @@ class tree {
 	private $kids;
 
 	//构造函数，初始化
-	public function __construct($SHA_1,$children) {
+	public function __construct($SHA_1) {
 		$this->SHA_1 = $SHA_1;
-		$this->children = $children;
+	//	$this->children = $children;
 		$this->kids = array();
 	}
 	
@@ -122,7 +127,7 @@ class tree {
 		if(empty($con)) 
 			return false;
 		mysql_select_db('YouGit',$con);
-		$sql = "INSERT INTO think_tree(SHA_1,children) VALUES('".$this->SHA_1."','".$this->children."');";
+		$sql = "INSERT INTO think_tree(SHA_1,children) VALUES('".$this->SHA_1."');";
 		if(!mysql_query($sql,$con)) 
 			return false;
 		return true;
