@@ -40,7 +40,7 @@ class RepositoryAction extends CommonAction {
 	 * ----------------------------------------------------------
 	 */
 	protected function bare($project) {
-		exec("/bin/bash /var/www/YouGit/shell/bare.sh $project.git",$result);
+		exec("/bin/bash /var/www/YouGit/script/bare.sh $project.git",$result);
 	}
 	
 	/**
@@ -75,7 +75,7 @@ class RepositoryAction extends CommonAction {
 	protected function push() {
 
 		$commit_msg = time();
-		exec("/bin/bash /var/www/YouGit/shell/push.sh $commit_msg");
+		exec("/bin/bash /var/www/YouGit/script/push.sh $commit_msg");
 	}
 
 	/**
