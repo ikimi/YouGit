@@ -54,6 +54,9 @@ class commit {
 	// commit 对象的 parent 节点
 	private $parent; 
 
+	// commit 对象子节点对象
+	private $kid;
+
 	// commit 对象描述信息
 	private $commit_msg;
 
@@ -78,6 +81,16 @@ class commit {
 		}
 		return true;
 	}
+
+	// 设置 commit 对象字节点
+	public function setKids($kid) {
+		$this->kid = $kid;
+	}
+
+	// 返回 commit 对象子节点
+	public function getKids() {
+		return $this->kid;
+	}
 }
 
 // tree 类
@@ -89,10 +102,17 @@ class tree {
 	// tree 对象字节点信息 字节点可能是 tree or blob
 	private $children;
 
+	// tree 对象父节点
+	private $father;
+
+	// tree 对象字节点对象数组
+	private $kids;
+
 	//构造函数，初始化
 	public function __construct($SHA_1,$children) {
 		$this->SHA_1 = $SHA_1;
 		$this->children = $children;
+		$this->kids = array();
 	}
 	
 	// 向数据库中存储对象
@@ -107,6 +127,26 @@ class tree {
 			return false;
 		return true;
 	}
+
+	// 设置 tree 对象父节点
+	public function setFather($father) {
+		$this->father = $father;
+	}
+
+	// 获得 tree 对象父节点
+	public function getFather() {
+		return $this->father;
+	}
+
+	// 设置子节点
+	public function setKids($kid) {
+		$this->kids[] = $kid;
+	}
+
+	// 返回字节点集合
+	public function getKids() {
+		return $this->kids;
+	}
 }
 
 // blob 类
@@ -118,11 +158,11 @@ class blob {
 	// blob 对象文件名
 	private $filename;
 
+	// blob 对象的父节点
+	private $father;
+
 	// blob 对象内容
 	private $content;
-
-	// blob 对象父节点
-	private $father; 
 
 	//构造函数 初始化
 	public function __construct($SHA_1,$filename,$content) {
@@ -142,6 +182,16 @@ class blob {
 		if(!mysql_query($sql,$con))
 			return false;
 		return true;
+	}
+
+	// 设置 blob 对象父节点
+	public function setFather($father) {
+		$this->father = $father;
+	}
+
+	// 返回 blob 对象父节点
+	public function getFather() {
+		return $this->father;
 	}
 }
 
