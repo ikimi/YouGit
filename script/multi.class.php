@@ -125,27 +125,37 @@ class tree {
 	}
 	
 	// 向数据库中存储对象
-	public function insert($con) {
+	public function insert($children,$con) {
 
 		// 如果数据库连接句柄为空
 		if(empty($con)) 
 			return false;
 		mysql_select_db('YouGit',$con);
-		$sql = "INSERT INTO think_tree(SHA_1,children) VALUES('".$this->SHA_1."');";
+		$sql = "INSERT INTO think_tree(SHA_1,dirname,children) VALUES('".$this->SHA_1."','".$this->dirname."','".$children."');";
 		if(!mysql_query($sql,$con)) 
 			return false;
 		return true;
 	}
 
-	// 过得 tree 对象 SHA_1 值
+	// 获得 tree 对象 SHA_1 值
 	public function getSHA() {
 		return $this->SHA_1;
 	}
-	
+
+	// 获得 tree 对象 dirname 值
 	public function getName() {
 		return $this->dirname;	
 	}
 
+	// 判断 tree 对象是否已经存在数据库中
+	public function isStored($con) {
+		mysql_select_db('YouGit',$con);
+		$sql = "SELECT COUNT(*) FROM think_tree WHERE SHA_1='".$this->SHA_1."';";
+		$result = mysql_query($sql,$con);
+		if(mysql_result($result,0))
+			return true;
+		return false;
+	}
 	// 设置 tree 对象父节点
 	public function setFather($father) {
 		$this->father = $father;
@@ -189,22 +199,34 @@ class blob {
 	}
 
 	// 将对象存储到数据库
-	public function insert($con) {
+	public function insert($content,$con) {
 
 		// 检查数据库句柄是否为空
 		if(empty($con))
 			return false;
 		mysql_select_db('YouGit',$con);
-		$sql = "INSERT INTO think_blob(SHA_1,filename,content) VALUES('".$this->SHA_1."','".$this->filename."');";
+		$sql = "INSERT INTO think_blob(SHA_1,filename,content) VALUES('".$this->SHA_1."','".$this->filename."','".$content."');";
 		if(!mysql_query($sql,$con))
 			return false;
 		return true;
 	}
 
+	// 判断 blob 对象是否已存在数据库中
+	public function isStored($con) {
+		mysql_select_db('YouGit',$con);
+		$sql = "SELECT COUNT(*) FROM think_blob WHERE SHA_1='".$this->SHA_1."';";
+		$result = mysql_query($sql,$con);
+		if(mysql_result($result,0))
+			return true;
+		return false;
+	}
+
+	//  获得 blob 对象SHA_1值
 	public function getSHA() {
 		return $this->SHA_1;
 	}
 
+	// 获得 blob 对象filename
 	public function getName() {
 		return $this->filename;
 	}

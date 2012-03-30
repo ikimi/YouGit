@@ -2,20 +2,32 @@
 
 // 建树函数
 function setTree($dir,$key) {
+
 	$result = null;
+	$children = '';
 	$sha_1 = $dir->getSHA();
 	exec("/bin/bash cat_file.sh $key $sha_1 2",$result);
-	foreach($result as $value) {
-		$temp = explode(" ",$value);
+	$con = db::getInstance();
 
+	foreach($result as $value) {
+		$children .= substr($value,7,45).';';
+		$temp = explode(" ",$value);
 		/*
 		 * 如果子节点是 blob
 		 * 创建 blob 对象,建立与 tree 对象的联系
 		 */
 		if('blob' == $temp[1]) {
 			$blob = new blob(substr($temp[2],0,40),substr($temp[2],41));
+
+			// 如果创建了新 blob 对象
+			if(!($blob->isStored($con->getHandler()))) {
+				$name = $blob->getSHA();
+				exec("/bin/bash cat_file.sh $key $name 2",$blobName);
+				$blob->insert($blobName[0],$con->getHandler());	
+				echo $name.'<br/>';
+			}
 			$dir->setKids($blob);
-			$blob->setFather($dir);	
+			$blob->setFather($dir);
 		}
 
 		// 如果子节点是 tree 
@@ -25,6 +37,11 @@ function setTree($dir,$key) {
 			$tree->setFather($dir);
 			setTree($tree,$key);
 		}
+	}
+
+	// 如果创建了新 tree 对象
+	if(!($dir->isStored($con->getHandler()))) {
+		$dir->insert($children,$con->getHandler());
 	}
 }
 
@@ -100,13 +117,16 @@ if(file_exists(LOG)) {
 					exec("/bin/bash cat_file.sh $key $object 2",$result);
 
 					// 获取根节点 及 主 tree
+					$con = db::getInstance();
+
 					$root = new commit($object,$result);
-					$dir = new tree($root->getTree());
+					$root->insert($con->getHandler());
+					$dir = new tree($root->getTree(),$key);
 
 					// 将主 tree 添加为子节点
 					$root->setKids($dir);
 
-					// 将 root 添加为 主 tree 的父节点
+					// 将 root 添加为主 tree 的父节点
 					$dir->setFather($root);
 					setTree($dir,$key);
 				}
@@ -115,23 +135,7 @@ if(file_exists(LOG)) {
 		}
 
 	// 遍历对象树
-	Traverse($dir);		
-	// 单例模式返回 db 对象 
-	/*
-	$con = db::getInstancommit) {
-		$commit->insert($con->getHandler());
-	}
-	foreach($trees as $tree) {
-		$tree->insert($con->getHandler());
-	}
-	foreach($blobs as $blob) {
-		$blob->insert($con->getHandler());
-	}
-	db::destory();
-	 */
-//	print_r($commits);echo "<br/>-------------------------------------<br/>";
-//	print_r($trees);echo  "<br/>-------------------------------------<br/>";
-//	print_r($blobs);echo "<br/>-------------------------------------<br/>";
+	Traverse($dir);
 
 	//将改变记录到日志中
 	file_put_contents(LOG,serialize($new_log));
