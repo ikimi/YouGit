@@ -104,6 +104,9 @@ class tree {
 	// tree 对象SHA-1值
 	private $SHA_1;
 
+	// tree 名称
+	private $dirname;
+
 	// tree 对象字节点信息 字节点可能是 tree or blob
 	private $children;
 
@@ -114,8 +117,9 @@ class tree {
 	private $kids;
 
 	//构造函数，初始化
-	public function __construct($SHA_1) {
+	public function __construct($SHA_1,$dirname = '') {
 		$this->SHA_1 = $SHA_1;
+		$this->dirname = $dirname;
 	//	$this->children = $children;
 		$this->kids = array();
 	}
@@ -131,6 +135,15 @@ class tree {
 		if(!mysql_query($sql,$con)) 
 			return false;
 		return true;
+	}
+
+	// 过得 tree 对象 SHA_1 值
+	public function getSHA() {
+		return $this->SHA_1;
+	}
+	
+	public function getName() {
+		return $this->dirname;	
 	}
 
 	// 设置 tree 对象父节点
@@ -170,10 +183,9 @@ class blob {
 	private $content;
 
 	//构造函数 初始化
-	public function __construct($SHA_1,$filename,$content) {
+	public function __construct($SHA_1,$filename) {
 		$this->SHA_1 = $SHA_1;
 		$this->filename = $filename;
-		$this->content = $content;
 	}
 
 	// 将对象存储到数据库
@@ -183,10 +195,18 @@ class blob {
 		if(empty($con))
 			return false;
 		mysql_select_db('YouGit',$con);
-		$sql = "INSERT INTO think_blob(SHA_1,filename,content) VALUES('".$this->SHA_1."','".$this->filename."','".$this->content."');";
+		$sql = "INSERT INTO think_blob(SHA_1,filename,content) VALUES('".$this->SHA_1."','".$this->filename."');";
 		if(!mysql_query($sql,$con))
 			return false;
 		return true;
+	}
+
+	public function getSHA() {
+		return $this->SHA_1;
+	}
+
+	public function getName() {
+		return $this->filename;
 	}
 
 	// 设置 blob 对象父节点
