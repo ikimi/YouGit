@@ -1,7 +1,7 @@
 <?php
 
 // 定义缓存项目
-define('CACHE_PATH','/var/www/YouGit/Repositories/');
+define('CACHE_PATH','/var/www/YouGit/Repositories');
 
 // 文件夹遍历
 function fileList($dir,&$fileList) {
@@ -22,18 +22,15 @@ function setTree($dir,$key,$path,&$fileList) {
 	$result = null;
 	$children = '';
 	$sha_1 = $dir->getSHA();
-	/*
-	 * 获得文件夹名，判断是否已经缓存
-	 * 如果已缓存 则跳过 
-	 * 如果没缓存 则创建缓存文件夹
-	 */
+
 	$path = $path.'/'.$dir->getName();
 	if(!is_dir(CACHE_PATH.$path)) {
 		mkdir(CACHE_PATH.$path,0777);
 	}
-	$key = array_search(CACHE_PATH.$path,$fileList);
-	if($key)
-		array_splice($fileList,$key,1);
+	echo CACHE_PATH.$path.'<br/>';
+	$Key = array_search(CACHE_PATH.$path,$fileList);
+	if($Key)
+		array_splice($fileList,$Key,1);
 
 	exec("/bin/bash cat_file.sh $key $sha_1 2",$result);
 	$con = db::getInstance();
@@ -47,7 +44,8 @@ function setTree($dir,$key,$path,&$fileList) {
 		 */
 		if('blob' == $temp[1]) {
 			$blob = new blob(substr($temp[2],0,40),substr($temp[2],41));
-
+			$fileName = CACHE_PATH.$path.'/'.$blob->getName();
+			echo $fileName.'<br/>';
 			// 如果创建了新 blob 对象
 			if(!($blob->isStored($con->getHandler()))) {
 				$name = $blob->getSHA();
@@ -58,33 +56,42 @@ function setTree($dir,$key,$path,&$fileList) {
 				 * 若存在则 重写缓存文件
 				 * 若不存在 则创建缓存文件 
 				 */
-				$fileName = CACHE_PATH.$path.'/'.$blob->getName();
-				if(!file_exists($fileName)
-					file_put_contents($fileName);
+				if(!file_exists($fileName))
+					file_put_contents($fileName,'');
 
 				// 更新缓存文件内容
-				$f = fopen($fileNamei,"w");
+				$f = fopen($fileName,"w");
 				fwrite($f,$blobName[0]);
 				fclose($f);
 
 				$dir->setKids($blob);
 				$blob->setFather($dir);
 			}
-		// coding...
 
+			// 更新 fileList
+			$Key = array_search($fileName,$fileList);
+			if($Key)
+				array_splice($fileList,$Key,1);
 		}
 
 		// 如果子节点是 tree 
 		else {
 			$tree = new tree(substr($temp[2],0,40),substr($temp[2],41));
-
+			$dirName = CACHE_PATH.$path.'/'.$tree->getName();
+			echo $dirName.'<br/>';
 			// 如果创建了新的 tree 对象
 			if(!($tree->isStored($con->getHandler()))) {
 				$dir->setKids($tree);
 				$tree->setFather($dir);
 				setTree($tree,$key,$path,&$fileList);
 			}
-		// coding...
+
+			// 如果是已存在的 tree 对象
+			else {
+				$Key = array_search($dirName,$fileList);
+				if($Key)
+					array_splice($fileList,$Key,1);
+			}
 		}
 	}
 
@@ -175,19 +182,22 @@ if(file_exists(LOG)) {
 					// 将 root 添加为主 tree 的父节点
 					$dir->setFather($root);
 					$fileList = array();
+					$fileList[] = CACHE_PATH.'/'.$key;
+					fileList(CACHE_PATH.'/'.$key,$fileList);
 					setTree($dir,$key,'',$fileList);
+					print_r($fileList);
 				}
 			}
 			next($changeList);
 		}
 
 	// 遍历对象树
-	Traverse($dir);
+//	Traverse($dir);
 	
-	$fileList = array();
-	$fileList[] = '/var/www/haha';
-	fileList('/var/www/haha',$fileList);
-	print_r($fileList);
+//	$fileList = array();
+//	$fileList[] = '/var/www/haha';
+//	fileList('/var/www/haha',$fileList);
+//	print_r($fileList);
 
 	//将改变记录到日志中
 	file_put_contents(LOG,serialize($new_log));
