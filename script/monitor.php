@@ -94,6 +94,11 @@ function setTree($dir,$key,$path,&$fileList) {
 				$Key = array_search($dirName,$fileList);
 				if($Key !== false)
 					array_splice($fileList,$Key,1);
+				$fileList_tmp = array();
+
+				// 该文件夹下所有的文件/文件夹都解除跟踪
+				fileList($dirName,$fileList_tmp);
+				$fileList = array_diff($fileList,$fileList_tmp);
 			}
 		}
 	}
