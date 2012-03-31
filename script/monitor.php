@@ -27,9 +27,8 @@ function setTree($dir,$key,$path,&$fileList) {
 	if(!is_dir(CACHE_PATH.$path)) {
 		mkdir(CACHE_PATH.$path,0777);
 	}
-	echo CACHE_PATH.$path.'<br/>';
 	$Key = array_search(CACHE_PATH.$path,$fileList);
-	if($Key)
+	if($Key !== false)
 		array_splice($fileList,$Key,1);
 
 	exec("/bin/bash cat_file.sh $key $sha_1 2",$result);
@@ -45,12 +44,16 @@ function setTree($dir,$key,$path,&$fileList) {
 		if('blob' == $temp[1]) {
 			$blob = new blob(substr($temp[2],0,40),substr($temp[2],41));
 			$fileName = CACHE_PATH.$path.'/'.$blob->getName();
-			echo $fileName.'<br/>';
+//			echo $fileName.'<br/>';
 			// 如果创建了新 blob 对象
 			if(!($blob->isStored($con->getHandler()))) {
 				$name = $blob->getSHA();
+				unset($blobName);
+				$blobName = array();
+
 				exec("/bin/bash cat_file.sh $key $name 2",$blobName);
 				$blob->insert($blobName[0],$con->getHandler());
+				echo $fileName.'---------'.$blob->getSHA().'--------'.$blobName[0].'<br/>';
 				/*
 				 * 判断缓存文件是否存在
 				 * 若存在则 重写缓存文件
@@ -70,7 +73,7 @@ function setTree($dir,$key,$path,&$fileList) {
 
 			// 更新 fileList
 			$Key = array_search($fileName,$fileList);
-			if($Key)
+			if($Key !== false)
 				array_splice($fileList,$Key,1);
 		}
 
@@ -78,9 +81,9 @@ function setTree($dir,$key,$path,&$fileList) {
 		else {
 			$tree = new tree(substr($temp[2],0,40),substr($temp[2],41));
 			$dirName = CACHE_PATH.$path.'/'.$tree->getName();
-			echo $dirName.'<br/>';
 			// 如果创建了新的 tree 对象
 			if(!($tree->isStored($con->getHandler()))) {
+				echo $dirName.'<br/>';
 				$dir->setKids($tree);
 				$tree->setFather($dir);
 				setTree($tree,$key,$path,&$fileList);
@@ -89,7 +92,7 @@ function setTree($dir,$key,$path,&$fileList) {
 			// 如果是已存在的 tree 对象
 			else {
 				$Key = array_search($dirName,$fileList);
-				if($Key)
+				if($Key !== false)
 					array_splice($fileList,$Key,1);
 			}
 		}
