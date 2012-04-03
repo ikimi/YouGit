@@ -6,9 +6,10 @@
 <body>
 <h4><?php echo ($error); ?></h4>
 <form name="login" method="post" action="">
-	用户名:<input name="username" type="text" size="15" /><br/>
-	密&nbsp码:<input name="password" type="password" size="15" /><br/>
+	Username:<input name="username" type="text" size="15" /><br/>
+	Password:<input name="password" type="password" size="15" /><br/>
 	<input name="submit" type="submit" value="Login">
 </form>
+<input name="regist" type="button" value="注册" onclick="window.location='regist'"/>
 </body>
 </html>

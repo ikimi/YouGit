@@ -1,5 +1,5 @@
 <?php
-class PeopleModel extends Model {
+p
 
 	public $truename = '';
 

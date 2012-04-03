@@ -5,7 +5,12 @@
 </head>
 <body>
 	<h5>Welcome {$username}</h5>
-<a href='logout'>Logout</a><br/>
-<a href='__APP__/Repository/create'>Create Repository</a><br/>
+	<a href='__APP__/Settings/profile'>Account Settings</a><br>
+	<a href='__APP__/Index/logout'>Logout</a><br>
+	<a href='__APP__/Repository/create'>Create Repository</a><br>
+<h5>Email {$Info.email}<br>
+Location {$Info.location}<br>
+Member Since {$Info.membersince}<br></h5>
+</volist>
 </body>
 </html>

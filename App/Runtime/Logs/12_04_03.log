@@ -1,0 +1,7 @@
+[ 2012-04-03T14:30:08+08:00 ] ERR: (ThinkException) 非法操作regist
+[ 2012-04-03T19:47:45+08:00 ] ERR: (ThinkException) Action:getInstance您所请求的方法不存在！
+[ 2012-04-03T19:48:11+08:00 ] ERR: (ThinkException) Action:getInstance您所请求的方法不存在！
+[ 2012-04-03T19:51:37+08:00 ] ERR: (ThinkException) Action:getInstance您所请求的方法不存在！
+[ 2012-04-03T19:53:52+08:00 ] ERR: (ThinkException) 非法操作ssh
+[ 2012-04-03T19:53:55+08:00 ] ERR: (ThinkException) 非法操作admin
+[ 2012-04-03T21:03:36+08:00 ] ERR: (ThinkException) 非法操作ssh

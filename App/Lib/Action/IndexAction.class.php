@@ -1,5 +1,4 @@
 <?php
-// 本文档自动生成，仅供测试运行
 class IndexAction extends Action
 {
     /**
@@ -13,8 +12,15 @@ class IndexAction extends Action
 			$this->redirect('login');
 			return ;
 		}
-		$visitor = unserialize($_COOKIE['visitor']);
+
+		// 实例化对象
+		$visitor = UserModel::getInstance($_COOKIE['username']);
+
+		// 获取用户信息
+		$Info = $visitor->getInfo();
+	//	var_dump($Info);
 		$this->assign('username',$_COOKIE['username']);
+		$this->assign('Info',$Info);
 		$this->display('index');
     }
 
@@ -29,7 +35,50 @@ class IndexAction extends Action
         $env_table = check_env();//根据当前函数获取当前环境
         echo $env_table;
     }
-	
+
+	/**
+	 * ----------------------------------------------------------
+	 * 用户注册
+	 * ----------------------------------------------------------
+	 */
+	public function regist() 
+	{
+		if(empty($_POST)) {
+			setcookie('connection','',time()-1);
+			$this->display('regist');
+		}
+		else {
+			if(strlen($_POST['username']) < 4) {
+				setcookie('connection','',time()-1);
+				$this->redirect('login');
+			}
+			elseif(strlen($_POST['password']) < 6) {
+				setcookie('error','Password needs at least 6 words~',0);
+				setcookie('connection','',time()-1);
+				$this->redirect('login');
+			}
+			elseif($_POST['password'] !== $_POST['confirm']) {
+				setcookie('error','Password is not equal to Confirm Password~',0);
+				setcookie('connection','',time()-1);
+				$this->redirect('login');
+			}
+			else {
+
+			// 用户注册的信息合法，创建用户
+			$data['username'] = $_POST['username'];
+			$data['password'] = $_POST['password'];
+			$data['email'] = $_POST['email'];
+			$data['membersince'] = date('F j,Y');
+			$data['location'] = $_POST['location'];
+			$visitor = UserModel::getInstance($_POST['username']);
+			$visitor->data($data)->add();
+			setcookie('error','Regist success~',0);
+			setcookie('connection','',time()-1);
+			$this->redirect('login');
+			}
+		}
+	}
+
 	/**
 	 * ----------------------------------------------------------
 	 * 登录验证
@@ -76,11 +125,11 @@ class IndexAction extends Action
 		$pwd = $visitor->where("username='{$username}'")->getField('password');
 		if($pwd == $password) {
 			$visitor->keyname = $visitor->where("username='{$username}'")->getField('keyname');
-			echo $visitor->getLastSql();
+		//	echo $visitor->getLastSql();
 			setcookie('username',$username,0,'/');
 			setcookie('connection','',time()-1);
 			//序列化
-			setcookie('visitor',serialize($visitor),0,'/');
+		//	setcookie('visitor',serialize($visitor),0,'/');
 			$this->redirect('index');
 		}
 		else {
