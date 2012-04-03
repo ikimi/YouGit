@@ -64,4 +64,22 @@ class UserModel extends Model {
 				return true;
 			}
 		}
+
+		public function getSshkey() {
+			$Key = $this->where("username='{$this->getName()}'")->field('keyTitle,key')->find();
+			return $Key;
+		}
+
+		public function setSshkey($title,$key) {
+
+			// STEP 1:更新数据库
+			$data['keyTitle'] = $title;
+			$data['key'] = $key;
+			$this->where("username='{$this->getName()}'")->save($data);
+
+			// STEP 2:更新keydir文件夹下面的文件
+			$file = "/var/www/YouGit/gitosis-admin/keydir/$title";
+			file_put_contents($file,$key);
+		}
+	}
 ?>

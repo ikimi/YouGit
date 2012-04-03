@@ -6,9 +6,10 @@ return array (
   3 => 'email',
   4 => 'blog',
   5 => 'company',
-  6 => 'key',
-  7 => 'membersince',
-  8 => 'location',
+  6 => 'keyTitle',
+  7 => 'key',
+  8 => 'membersince',
+  9 => 'location',
   '_autoinc' => false,
   '_pk' => 'username',
 );

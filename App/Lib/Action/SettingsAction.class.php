@@ -25,22 +25,35 @@
 		// 用户设置SSH Key 
 		public function ssh() {
 			if(empty($_POST)) {
+				$visitor = UserModel::getInstance($_COOKIE['username']);
+				$SSH = $visitor->getSshkey();
+				$this->assign('SSH',$SSH);
 				$this->display('ssh');
 			}
 			else {
-
+				
+				// 添加 SSH Key
+				$visitor = UserModel::getInstance($_COOKIE['username']);
+				$visitor->setSshkey($_POST['title'],$_POST['key']);
+				$this->redirect('ssh');
 			}
 		}
 
 		// 用户重置密码
 		public function admin() {
 			if(empty($_POST)) {
+				$this->assign('error',$_COOKIE['error']);
 				$this->display('admin');
 				setcookie('error','',time()-1);
 			}
 			else {
 				$visitor = UserModel::getInstance($_COOKIE['username']);
-				$visitor->setPassword($_POST['password'],$_POST['confirm']);
+				$password = $visitor->getPassword();
+				if($password === $_POST['old']) {
+					$visitor->setPassword($_POST['new'],$_POST['confirm']);
+				}
+				else
+					setcookie('error','Old Password is invilid~',0);
 				$this->redirect('admin');
 			}
 		}
