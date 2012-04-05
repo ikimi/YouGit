@@ -12,7 +12,7 @@
 Location <?php echo ($Info["location"]); ?><br>
 Member Since <?php echo ($Info["membersince"]); ?><br></h5>
 <?php if(is_array($repos)): $i = 0; $__LIST__ = $repos;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$repo): ++$i;$mod = ($i % 2 )?>----------------------------------------------------------
-<h4><a href="__APP__/Repository/index?proName=<?php echo ($repo["project"]); ?>"><?php echo ($repo["project"]); ?></a></h4>
+<h4><a href="__APP__/Repository/index?project=<?php echo ($repo["project"]); ?>"><?php echo ($repo["project"]); ?></a></h4>
 <?php echo ($repo["description"]); ?><br>
 <?php echo ($repo["homepage"]); ?><br>
 ----------------------------------------------------------<?php endforeach; endif; else: echo "" ;endif; ?>

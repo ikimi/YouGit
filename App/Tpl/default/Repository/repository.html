@@ -8,6 +8,7 @@
 	<a href='__APP__/Index/logout'>Logout</a><br>
 	<a href='__APP__/Repository/create'>Create Repository</a><br>
 <h5>{$info.project}</h5>
+<h5>{$path}</h5>
 <volist name='data' id='vo'>
 <a href="__APP__/Repository/repository?{$vo.path}">{$vo.name}</a><br>
 </volist>

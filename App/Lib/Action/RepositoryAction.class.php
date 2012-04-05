@@ -14,13 +14,13 @@ class RepositoryAction extends CommonAction {
 		 * 若为空 则显示固定页面
 		 * 若不为空 则显示项目信息
 		 */
-		$repo = RepositoryModel::getInstance($_GET['proName']);
+		$repo = RepositoryModel::getInstance($_GET['project']);
 		$empty = $repo->isEmpty();
 
 		if($empty['empty']) {
 			$visitor = UserModel::getInstance($_COOKIE['username']);
 			$data = $visitor->where("username='{$visitor->getName()}'")->field('name,email')->find();
-			$data['project'] = $_GET['proName'];
+			$data['project'] = $_GET['project'];
 			$data['ip'] = $_SERVER['REMOTE_ADDR'];
 
 			$this->assign('data',$data);
@@ -31,17 +31,17 @@ class RepositoryAction extends CommonAction {
 			// 显示项目文件列表
 			$info = $repo->getInfo();
 			$this->assign('info',$info);
-			$path = $this->repoPath.'/'.$_GET['proName'].'.git/';
+			$path = $this->repoPath.'/'.$_GET['project'].'.git/';
 			$list = scandir($path);
-			array_splice($list,0,1);
+			array_splice($list,0,2);
 
 			$data = array();
 			foreach($list as $value) {
 				if(is_file($path.$value)) {
-					$temp['path'] = "project={$_GET['proName']}&blob=$value";
+					$temp['path'] = "project={$_GET['project']}&blob=$value";
 				}
 				else
-					$temp['path'] = "project={$_GET['proName']}&tree=$value";
+					$temp['path'] = "project={$_GET['project']}&tree=$value/";
 					$temp['name'] = $value;
 					$data[] = $temp;
 				}
@@ -58,7 +58,7 @@ class RepositoryAction extends CommonAction {
 	public function repository() {
 
 		if(isset($_GET['tree']))
-			$path = $this->repoPath.'/'.$_GET['project'].'.git/'.$_GET['tree'].'/';
+			$path = $this->repoPath.'/'.$_GET['project'].'.git/'.$_GET['tree'];
 		if(isset($_GET['blob']))
 			$path = $this->repoPath.'/'.$_GET['project'].'.git/'.$_GET['blob'];
 
@@ -72,18 +72,29 @@ class RepositoryAction extends CommonAction {
 
 		// 如果是目录 返回目录内内容列表
 		elseif(is_dir($path)) {
+			echo $path;
 			$list = scandir($path);
-			array_splice($list,0,1);
+			array_splice($list,0,2);
 
-			$data = array();	
+			$pos = strrpos($_GET['tree'],'/');
+			$tree = substr($_GET['tree'],0,$pos);
+			if($tree == '') {
+				$this->redirect("index?project={$_GET['project']}");
+				return;
+			}
+			$temp['path'] = "project={$_GET['project']}&tree=$tree";
+			$temp['name'] = '..';
+			$data[] = $temp;
+
 			foreach($list as $value) {
 				if(is_file($path.$value))
-					$temp['path'] = "project={$_GET['project']}&blob={$_GET['tree']}/$value";
+					$temp['path'] = "project={$_GET['project']}&blob={$_GET['tree']}$value";
 				else
-					$temp['path'] = "project={$_GET['project']}&tree={$_GET['tree']}/$value";
+					$temp['path'] = "project={$_GET['project']}&tree={$_GET['tree']}$value/";
 				$temp['name'] = $value;
 				$data[] = $temp;
 			}
+			$this->assign('path',$_GET['project'].'/'.$_GET['tree']);
 			$this->assign('data',$data);
 			$this->display('repository');
 		}
