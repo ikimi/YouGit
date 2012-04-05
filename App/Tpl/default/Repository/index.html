@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>YouGit</title>
+</head>
+<body>
+	<a href='__APP__/Settings/profile'>Account Settings</a><br>
+	<a href='__APP__/Index/logout'>Logout</a><br>
+	<a href='__APP__/Repository/create'>Create Repository</a><br>
+<h5>{$info.project}</h5>
+<a href="http://{$info.homepage}">{$info.homepage}</a><br>
+{$info.description}<br>
+<volist name='data' id='vo'>
+<a href="__APP__/Repository/repository?{$vo.path}">{$vo.name}</a><br>
+</volist>
+</body>
+</html>

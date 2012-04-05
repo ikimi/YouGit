@@ -44,7 +44,7 @@ function setTree($dir,$key,$path,&$fileList) {
 		if('blob' == $temp[1]) {
 			$blob = new blob(substr($temp[2],0,40),substr($temp[2],41));
 			$fileName = CACHE_PATH.$path.'/'.$blob->getName();
-//			echo $fileName.'<br/>';
+
 			// 如果创建了新 blob 对象
 			if(!($blob->isStored($con->getHandler()))) {
 				$name = $blob->getSHA();
@@ -52,8 +52,12 @@ function setTree($dir,$key,$path,&$fileList) {
 				$blobName = array();
 
 				exec("/bin/bash cat_file.sh $key $name 2",$blobName);
-				$blob->insert($blobName[0],$con->getHandler());
-				echo $fileName.'---------'.$blob->getSHA().'--------'.$blobName[0].'<br/>';
+				$content = '';
+				foreach($blobName as $line) {
+					$content .= $line."\n";
+				}
+				$blob->insert($content,$con->getHandler());
+				echo $fileName.'---------'.$blob->getSHA().'--------'.$content.'<br/>';
 				/*
 				 * 判断缓存文件是否存在
 				 * 若存在则 重写缓存文件
@@ -64,7 +68,7 @@ function setTree($dir,$key,$path,&$fileList) {
 
 				// 更新缓存文件内容
 				$f = fopen($fileName,"w");
-				fwrite($f,$blobName[0]);
+				fwrite($f,$content);
 				fclose($f);
 
 				$dir->setKids($blob);
@@ -193,7 +197,6 @@ if(file_exists(LOG)) {
 					$fileList[] = CACHE_PATH.'/'.$key;
 					fileList(CACHE_PATH.'/'.$key,$fileList);
 					setTree($dir,$key,'',$fileList);
-					print_r($fileList);
 				}
 			}
 			next($changeList);

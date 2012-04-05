@@ -1,6 +1,7 @@
 <?php
 class RepositoryAction extends CommonAction {
 
+	private $repoPath = '/var/www/YouGit/Repositories';
 	/**
 	 * ----------------------------------------------------------
 	 * 项目首页
@@ -15,6 +16,7 @@ class RepositoryAction extends CommonAction {
 		 */
 		$repo = RepositoryModel::getInstance($_GET['proName']);
 		$empty = $repo->isEmpty();
+
 		if($empty['empty']) {
 			$visitor = UserModel::getInstance($_COOKIE['username']);
 			$data = $visitor->where("username='{$visitor->getName()}'")->field('name,email')->find();
@@ -26,9 +28,64 @@ class RepositoryAction extends CommonAction {
 		}
 		else {
 
-			// 检索项目列表，展示所有项目
+			// 显示项目文件列表
 			$info = $repo->getInfo();
-			var_dump($info);
+			$this->assign('info',$info);
+			$path = $this->repoPath.'/'.$_GET['proName'].'.git/';
+			$list = scandir($path);
+			array_splice($list,0,1);
+
+			$data = array();
+			foreach($list as $value) {
+				if(is_file($path.$value)) {
+					$temp['path'] = "project={$_GET['proName']}&blob=$value";
+				}
+				else
+					$temp['path'] = "project={$_GET['proName']}&tree=$value";
+					$temp['name'] = $value;
+					$data[] = $temp;
+				}
+			$this->assign('data',$data);
+			$this->display('index');
+		}
+	}
+
+	/**
+	 * ----------------------------------------------------------
+	 * 返回缓存项目内容
+	 * ----------------------------------------------------------
+	 */
+	public function repository() {
+
+		if(isset($_GET['tree']))
+			$path = $this->repoPath.'/'.$_GET['project'].'.git/'.$_GET['tree'].'/';
+		if(isset($_GET['blob']))
+			$path = $this->repoPath.'/'.$_GET['project'].'.git/'.$_GET['blob'];
+
+		// 如果是文件 返回文件内容
+		if(is_file($path)) {
+			$content = file_get_contents($path);
+			$this->assign('content',$content);
+			//$this->display('');
+			echo $content;
+		}
+
+		// 如果是目录 返回目录内内容列表
+		elseif(is_dir($path)) {
+			$list = scandir($path);
+			array_splice($list,0,1);
+
+			$data = array();	
+			foreach($list as $value) {
+				if(is_file($path.$value))
+					$temp['path'] = "project={$_GET['project']}&blob={$_GET['tree']}/$value";
+				else
+					$temp['path'] = "project={$_GET['project']}&tree={$_GET['tree']}/$value";
+				$temp['name'] = $value;
+				$data[] = $temp;
+			}
+			$this->assign('data',$data);
+			$this->display('repository');
 		}
 	}
 
