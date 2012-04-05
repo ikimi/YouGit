@@ -13,14 +13,21 @@ class IndexAction extends Action
 			return ;
 		}
 
-		// 实例化对象
+		/*
+		 * 实例化对象
+		 * 获取用户信息
+		 */
 		$visitor = UserModel::getInstance($_COOKIE['username']);
-
-		// 获取用户信息
 		$Info = $visitor->getInfo();
-	//	var_dump($Info);
 		$this->assign('username',$_COOKIE['username']);
 		$this->assign('Info',$Info);
+
+		/*
+		 * 获取用户参加的项目的信息
+		 */
+		$repos = $visitor->getRepos();
+		//var_dump($repos);
+		$this->assign('repos',$repos);
 		$this->display('index');
     }
 

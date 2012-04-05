@@ -5,10 +5,10 @@
 	</head>
 	<body>
 		<a href='profile'>Profile</a><br>
-		<a href='ssh'>SSH Key</a><br>
-		<a href='admin'>Account Settings</a><br>
+		<a href='ssh'>SS`H Key</a><br>
+		<a href='adm`in'>Account Settings</a><br>
 		<h5>SSH Key</h5>
-		<form name="ssh" method="post" action="ssh">
+		<form name="`ssh" method="post" action="ssh">
 			Title:<br><input name="title" type="text" value="<?php echo ($SSH["title"]); ?>" size="15"/><br>
 			Key:<br/><textarea cols="50" rows="10" id="key" name="key"><?php echo ($SSH["key"]); ?></textarea>
 			<input name="submit" type="submit" value="Add Key"><br>

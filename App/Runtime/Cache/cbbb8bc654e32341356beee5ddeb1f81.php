@@ -6,8 +6,10 @@
 </head>
 <body>
 <form name="create" method="post" action="create">
-	项目名:<input name="project" type="text" size="15" /><br/>
-	<input name="submit" type="submit" value="Create">
+	Project:<br><input name="project" type="text" size="15" /><br>
+	Desctiption(Optional):<br><input name="description" type="text" size="15"><br>
+	Homepage uRL(Optional):<br><input name="homepage" type="text" size="15"><br>
+	<input name="submit" type="submit" value="Create repository">
 </form>
 </body>
 </html>

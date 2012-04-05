@@ -1,16 +1,58 @@
 <?php
 class RepositoryAction extends CommonAction {
 
-	protected $visitor;
+	/**
+	 * ----------------------------------------------------------
+	 * 项目首页
+	 * ----------------------------------------------------------
+	 */
+	public function index() {
+		
+		/*
+		 * 判断项目是否为空	
+		 * 若为空 则显示固定页面
+		 * 若不为空 则显示项目信息
+		 */
+		$repo = RepositoryModel::getInstance($_GET['proName']);
+		$empty = $repo->isEmpty();
+		if($empty['empty']) {
+			$visitor = UserModel::getInstance($_COOKIE['username']);
+			$data = $visitor->where("username='{$visitor->getName()}'")->field('name,email')->find();
+			$data['project'] = $_GET['proName'];
+			$data['ip'] = $_SERVER['REMOTE_ADDR'];
+
+			$this->assign('data',$data);
+			$this->display('default');
+		}
+		else {
+
+			// 检索项目列表，展示所有项目
+			$info = $repo->getInfo();
+			var_dump($info);
+		}
+	}
 
 	/**
 	 * ----------------------------------------------------------
-	 * 初始化---反序列化People对象
+	 * 更新workship表
 	 * ----------------------------------------------------------
 	 */
-	public function _initialize() {
-		$this->visitor = unserialize($_COOKIE['visitor']);
+	public function workship($project,$description='',$homepage='') {
+		if(empty($project))
+			return false;
+
+		$repo = RepositoryModel::getInstance($project);
+
+		$workship = M('workship');
+		$data['username'] = $_COOKIE['username'];
+		$data['reponame'] = $project;
+
+		if(($workship->data($data)->add())&&($repo->insert($project,$description,$homepage)))
+			return true;
+		else
+			return false;
 	}
+
 	/**
 	 * ----------------------------------------------------------
 	 * 项目创建
@@ -20,14 +62,14 @@ class RepositoryAction extends CommonAction {
 		if(empty($_POST['project']))
 			$this->display('create');
 		else {
-			if($this->visitor->create($_POST['project'])) {
+			if($this->workship($_POST['project'],$_POST['description'],$_POST['homepage'])) {
 					$this->bare($_POST['project']);
 				if($this->config($_POST['project']))
 					$this->push();
-			//在server端初始化项目
-					echo 'success';	
+				$this->redirect("index?proName={$_POST['project']}");
 			}
 			else {
+
 				//创建项目失败
 				echo 'failed';
 			}

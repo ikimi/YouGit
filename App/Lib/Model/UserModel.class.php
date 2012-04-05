@@ -81,5 +81,19 @@ class UserModel extends Model {
 			$file = "/var/www/YouGit/gitosis-admin/keydir/$title";
 			file_put_contents($file,$key);
 		}
+
+		// 获取用户所有参加的项目
+		public function getRepos() {
+			
+			// 在合作表中获取
+			$workship = M('workship');
+			$repos = $workship->where("username='{$this->getName()}'")->field('project')->select();
+			$data = array();
+			foreach($repos as $repo) {
+				$Repo = RepositoryModel::getInstance($repo['project']);
+				$data[] = $Repo->getInfo();
+			}
+			return $data;
+		}
 	}
 ?>
