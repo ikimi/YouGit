@@ -71,8 +71,9 @@ class commit {
 		$this->SHA_1 = $SHA_1;
 		$this->tree = substr($message[0],5);
 		$this->parent = substr($message[1],7);
-	//	$this->commitor = substr($message[3],10,);
-	//	$this->time = ;
+		list($a,$b,$c,$d,$e) = split('[ ]',$message[3]);
+		$this->commitor = $b;
+		$this->time = $d;
 		$this->commit_msg = $message[5];
 	}
 
@@ -83,7 +84,7 @@ class commit {
 		if(empty($con))
 			return false;
 		$db_selected = mysql_select_db('YouGit',$con);
-		$sql = "INSERT INTO think_commit(SHA_1,tree,parent,commit_msg) VALUES('".$this->SHA_1."','".$this->tree."','".$this->parent."','".$this->commit_msg."');";
+		$sql = "INSERT INTO think_commit(SHA_1,tree,parent,commitor,time,commit_msg) VALUES('".$this->SHA_1."','".$this->tree."','".$this->parent."','".$this->commitor."','".$this->time."','".$this->commit_msg."');";
 		if(!mysql_query($sql,$con)) {
 			return false;
 		}

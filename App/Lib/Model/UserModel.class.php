@@ -96,7 +96,6 @@ class UserModel extends Model {
 				$temp['msg'] = $Repo->getUpdate();
 				$data[] = $temp;
 			}
-			var_dump($data);
 			return $data;
 		}
 	}
