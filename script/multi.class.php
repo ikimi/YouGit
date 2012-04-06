@@ -57,6 +57,12 @@ class commit {
 	// commit 对象子节点对象
 	private $kid;
 
+	// 提交者
+	private $commitor;
+
+	// 提交时间
+	private $time;
+
 	// commit 对象描述信息
 	private $commit_msg;
 
@@ -65,6 +71,8 @@ class commit {
 		$this->SHA_1 = $SHA_1;
 		$this->tree = substr($message[0],5);
 		$this->parent = substr($message[1],7);
+	//	$this->commitor = substr($message[3],10,);
+	//	$this->time = ;
 		$this->commit_msg = $message[5];
 	}
 

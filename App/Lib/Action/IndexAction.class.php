@@ -26,7 +26,6 @@ class IndexAction extends Action
 		 * 获取用户参加的项目的信息
 		 */
 		$repos = $visitor->getRepos();
-		//var_dump($repos);
 		$this->assign('repos',$repos);
 		$this->display('index');
     }

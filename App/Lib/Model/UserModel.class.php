@@ -91,8 +91,12 @@ class UserModel extends Model {
 			$data = array();
 			foreach($repos as $repo) {
 				$Repo = RepositoryModel::getInstance($repo['project']);
-				$data[] = $Repo->getInfo();
+				unset($temp);
+				$temp['info'] = $Repo->getInfo();
+				$temp['msg'] = $Repo->getUpdate();
+				$data[] = $temp;
 			}
+			var_dump($data);
 			return $data;
 		}
 	}

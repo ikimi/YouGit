@@ -183,6 +183,11 @@ if(file_exists(LOG)) {
 
 					// 获取根节点 及 主 tree
 					$con = db::getInstance();
+					
+					// 将此次提交信息存入 info 表
+					mysql_select_db('YouGit',$con->getHandler());
+					$sql = "INSERT INTO think_info(SHA_1,dirname) VALUES('".$object."','".$key."');";
+					mysql_query($sql,$con->getHandler());
 
 					$root = new commit($object,$result);
 					$root->insert($con->getHandler());

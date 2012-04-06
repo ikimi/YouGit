@@ -44,6 +44,19 @@ class RepositoryModel extends Model {
 	public function getInfo() {
 		return $this->where("project='{$this->getName()}'")->field('project,description,homepage')->find();
 	}
-
+	
+	// 返回项目最新信息
+	public function getUpdate() {
+		$info = M('info');
+		$commits = $info->where("dirname='{$this->getName()}.git'")->field('SHA_1')->select();
+		if($commits !== null) {
+			$com = M('commit');
+			$data = array();
+			foreach($commits as $commit) {
+				$data[] = $com->where("SHA_1='{$commit['SHA_1']}'")->field('commitor,time,commit_msg')->find();
+			}
+		return $data;
+		}
+	}
 }
 ?>
