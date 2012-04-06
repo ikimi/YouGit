@@ -1,0 +1,6 @@
+[ 2012-04-06T15:12:26+08:00 ] ERR: (ThinkException) Action:getName您所请求的方法不存在！
+[ 2012-04-06T15:14:41+08:00 ] ERR: (ThinkException) 模板不存在[./App/Tpl/default/Repository/admin?project=YouGit.html]
+[ 2012-04-06T15:15:00+08:00 ] ERR: (ThinkException) 模板不存在[./App/Tpl/default/Repository/admin?project=YouGit.html]
+[ 2012-04-06T15:15:47+08:00 ] ERR: (ThinkException) Action:where您所请求的方法不存在！
+[ 2012-04-06T15:20:57+08:00 ] ERR: (ThinkException) 模板不存在[./App/Tpl/default/Repository/admin?project=YouGit.html]
+[ 2012-04-06T15:21:04+08:00 ] ERR: (ThinkException) 模板不存在[./App/Tpl/default/Repository/admin?project=YouGit.html]

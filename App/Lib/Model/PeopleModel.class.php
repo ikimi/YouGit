@@ -1,5 +1,4 @@
 <?php
-p
 
 	public $truename = '';
 

@@ -1,0 +1,15 @@
+<html xmlns="http://www.w3c.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>YouGit</title>
+	</head>
+	<body>
+		<a href='admin'>admin</a><br>
+		<a href='collaborators'>collaborators</a><br>
+		<form name="profile" method="post" action="admin">
+			Description:<br><input name="description" type="text" value="{$info.description}" size="15"/><br>
+			Homepage:<br><input name="homepage" type="text" value="{$info.homepage}" size="15"/><br/>
+			<input name="submit" type="submit" value="Save"><br>
+		</form>
+	</body>
+</html>

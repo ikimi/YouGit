@@ -1,0 +1,17 @@
+<html xmlns="http://www.w3c.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>YouGit</title>
+	</head>
+	<body>
+		<a href='profile'>Profile</a><br>
+		<a href='ssh'>SSH Key</a><br>
+		<a href='admin'>Account Settings</a><br>
+		<form name="collaborators" method="post" action="collaborators">
+			<volist name='userList' id='vo'>
+			<input  name='collaborators[]' type='checkbox' value="{$vo.username}"/>{$vo.username}<br>
+			</volist>
+			<input name="submit" type="submit" value="Add"><br>
+		</form>
+	</body>
+</html>

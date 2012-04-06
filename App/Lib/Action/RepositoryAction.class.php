@@ -14,6 +14,10 @@ class RepositoryAction extends CommonAction {
 		 * 若为空 则显示固定页面
 		 * 若不为空 则显示项目信息
 		 */
+		if(isset($_COOKIE['project']) && ($_COOKIE['project'] != $_GET['project'])) {
+			unset($_COOKIE['project']);
+		}
+		setcookie('project',$_GET['project']);
 		$repo = RepositoryModel::getInstance($_GET['project']);
 		$empty = $repo->isEmpty();
 
@@ -72,7 +76,6 @@ class RepositoryAction extends CommonAction {
 
 		// 如果是目录 返回目录内内容列表
 		elseif(is_dir($path)) {
-			echo $path;
 			$list = scandir($path);
 			array_splice($list,0,2);
 
@@ -113,12 +116,67 @@ class RepositoryAction extends CommonAction {
 
 		$workship = M('workship');
 		$data['username'] = $_COOKIE['username'];
-		$data['reponame'] = $project;
+		$data['project'] = $project;
 
 		if(($workship->data($data)->add())&&($repo->insert($project,$description,$homepage)))
 			return true;
 		else
 			return false;
+	}
+
+	/**
+	 * ----------------------------------------------------------
+	 * 项目属性
+	 * ----------------------------------------------------------
+	 */
+	public function admin() {
+		$project = $_COOKIE['project'];
+		if(empty($_POST)) {
+			$repo = RepositoryModel::getInstance($project);
+			$info = $repo->getInfo();
+
+			$this->assign('info',$info);
+			$this->display("admin");
+		}
+		else {
+			$data['description'] = $_POST['description'];
+			$data['homepage'] = $_POST['homepage'];
+			$repo = RepositoryModel::getInstance($project);
+			$repo->where("project='{$repo->getName()}'")->save($data);
+			$this->redirect('admin');
+		}
+	}
+
+	/**
+	 * ----------------------------------------------------------
+	 * 给项目添加贡献者
+	 * ----------------------------------------------------------
+	 */
+	public function collaborators() {
+		if(empty($_POST)) {
+			$visitor = UserModel::getInstance($_COOKIE['username']);
+			$userList = $visitor->field('username')->select();
+			$this->assign('userList',$userList);
+			$this->display('collaborators');
+		}
+		else {
+
+			// 获得要添加的用户
+			$workship = M('workship');
+			$data = array();
+			$data['project'] = $_COOKIE['project'];
+
+			// 将信息存到 workship 表中
+			foreach($_POST['collaborators'] as $value) {
+				$data['username'] = $value;
+				$workship->data($data)->add();
+				$visitor = UserModel::getInstance($_COOKIE['username']);
+				$key = $visitor->getSshkey();
+				if($this->config($key['keyTitle'],$_COOKIE['project']))
+					$this->push();	
+			}
+			$this->redirect('admin');
+		}
 	}
 
 	/**
@@ -131,10 +189,13 @@ class RepositoryAction extends CommonAction {
 			$this->display('create');
 		else {
 			if($this->workship($_POST['project'],$_POST['description'],$_POST['homepage'])) {
-					$this->bare($_POST['project']);
-				if($this->config($_POST['project']))
+				$this->bare($_POST['project']);
+				$visitor = UserModel::getInstance($_COOKIE['username']);
+				$key = $visitor->getSshkey();
+
+				if($this->config($key['keyTitle'],$_POST['project']))
 					$this->push();
-				$this->redirect("index?proName={$_POST['project']}");
+				$this->redirect("index?project={$_POST['project']}");
 			}
 			else {
 
@@ -158,7 +219,7 @@ class RepositoryAction extends CommonAction {
 	 * 设置gitosis-admin.git 项目管理权限
 	 * ----------------------------------------------------------
 	 */
-	protected function config($project) {
+	protected function config($key,$project) {
 
 		//打开权限配置文件
 		if(!($file = fopen("/var/www/YouGit/gitosis-admin/gitosis.conf","a+"))) {
@@ -170,7 +231,7 @@ class RepositoryAction extends CommonAction {
 		fwrite($file,time()."]\n");
 
 		//增加配置信息
-		fwrite($file,"members = {$this->visitor->keyname}\n");
+		fwrite($file,"members = $key\n");
 		fwrite($file,"writable = $project\n");
 		
 		return true;
