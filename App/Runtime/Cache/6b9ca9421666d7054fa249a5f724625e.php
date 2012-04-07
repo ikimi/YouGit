@@ -14,8 +14,13 @@
 	<h7><?php echo ($info["commitor"]); ?> <?php echo ($info["time"]); ?></h7><br>
 	parent <a href="__APP__/Repository/commit?commit=<?php echo ($info["parent"]); ?>"><?php echo ($info["parent"]); ?></a> commit <a href="__APP__/Repository/commit?commit=<?php echo ($info["SHA_1"]); ?>"><?php echo ($info["SHA_1"]); ?></a>
 	<br>-----------------------------------------<br>
-	<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo): ++$i;$mod = ($i % 2 )?><?php echo ($vo["file"]); ?>&nbsp<?php echo ($vo["info"]); ?><br><?php endforeach; endif; else: echo "" ;endif; ?>
+	<?php if(is_array($data)): $i = 0; $__LIST__ = $data;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$vo1): ++$i;$mod = ($i % 2 )?><?php echo ($vo1["file"]); ?>&nbsp<?php echo ($vo1["info"]); ?><br><?php endforeach; endif; else: echo "" ;endif; ?>
 	<?php echo ($msg); ?>
 	<br>-----------------------------------------<br>
+	<?php if(is_array($files)): $i = 0; $__LIST__ = $files;if( count($__LIST__)==0 ) : echo "" ;else: foreach($__LIST__ as $key=>$file): ++$i;$mod = ($i % 2 )?><?php echo ($file["filename"]); ?><br>
+	<?php echo ($file["status"]); ?><br>
+	<a href="__APP__/Repository/blob?blob=<?php echo ($file["SHA_1"]); ?>">View file</a><br>
+	<?php echo ($file["content"]); ?>
+	<br>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br><?php endforeach; endif; else: echo "" ;endif; ?>
 </body>
 </html>

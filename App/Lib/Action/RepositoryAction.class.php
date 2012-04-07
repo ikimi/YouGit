@@ -224,18 +224,63 @@ class RepositoryAction extends CommonAction {
 			$temp['info'] = trim($temp['info']);
 			$data[] = $temp;
 		}
-
+		$msg = $result[$len-1];
 		// 文件差异对比
+		unset($temp);
 		unset($result);
 		$result = array();
 		exec("/bin/bash /var/www/YouGit/script/diff.sh  $project $father $commit 0",$result);
-		var_dump($result);
-		//		var_dump($data);
+
+		// 获得更改文件的对比信息
+		$files = array();
+		$len = count($result);
+		for($i = 0;$i < $len;) {
+			if(substr($result[$i],0,10) == 'diff --git') {
+				if(!empty($temp)) {
+					$files[] = $temp;
+					unset($temp);
+				}
+
+				// 获得文件名
+				$filename = split(' ',substr($result[$i++],13));
+				$temp['filename'] = $filename[0];
+
+				// 是否是新文件
+				if(substr($result[$i],0,5) == 'index') {
+					$temp['status'] = 'modified';
+				}
+				elseif(substr($result[$i],0,8) == 'new file') {
+					$temp['status'] = 'added';
+					$i++;
+				}
+				$temp['SHA_1'] = substr($result[$i++],-7);
+				$i += 2;
+			}
+			$temp['content'] .= $result[$i++];
+		}
+		if(!empty($temp))
+			$files[] = $temp;
+
 		$this->assign('project',$_COOKIE['project']);
 		$this->assign('info',$info);
 		$this->assign('data',$data);
-		$this->assign('msg',$result[$len-1]);
-//		$this->display("commit");
+		$this->assign('msg',$msg);
+		$this->assign('files',$files);
+		$this->display("commit");
+	}
+
+	/**
+	 * ----------------------------------------------------------
+	 * 浏览文件
+	 * ----------------------------------------------------------
+	 */
+	public function blob() {
+		$blob = $_GET['blob'];
+		$result = array();
+		exec("/bin/bash /var/www/YouGit/script/cat_file.sh {$_COOKIE['project']}.git $blob 2",$result);
+		foreach($result as $value)
+			echo $value.'<br>';
+	//	var_dump($result);
 	}
 
 	/**

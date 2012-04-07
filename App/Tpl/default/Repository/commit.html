@@ -14,10 +14,17 @@
 	<h7>{$info.commitor} {$info.time}</h7><br>
 	parent <a href="__APP__/Repository/commit?commit={$info.parent}">{$info.parent}</a> commit <a href="__APP__/Repository/commit?commit={$info.SHA_1}">{$info.SHA_1}</a>
 	<br>-----------------------------------------<br>
-	<volist name='data' id='vo'>
-	{$vo.file}&nbsp{$vo.info}<br>
+	<volist name='data' id='vo1'>
+	{$vo1.file}&nbsp{$vo1.info}<br>
 	</volist>
 	{$msg}
 	<br>-----------------------------------------<br>
+	<volist name='files' id='file'>
+	{$file.filename}<br>
+	{$file.status}<br>
+	<a href="__APP__/Repository/blob?blob={$file.SHA_1}">View file</a><br>
+	{$file.content}
+	<br>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~<br>
+	</volist>
 </body>
 </html>
