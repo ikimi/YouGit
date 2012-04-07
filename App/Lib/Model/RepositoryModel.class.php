@@ -53,7 +53,7 @@ class RepositoryModel extends Model {
 			$com = M('commit');
 			$data = array();
 			foreach($commits as $commit) {
-				$data[] = $com->where("SHA_1='{$commit['SHA_1']}'")->field('commitor,time,commit_msg')->find();
+				$data[] = $com->where("SHA_1='{$commit['SHA_1']}'")->field('SHA_1,commitor,time,commit_msg')->find();
 			}
 		return $data;
 		}

@@ -12,7 +12,10 @@
 	<br>-----------------------------------------<br>
 	<h5>{$path}</h5>
 	<volist name='data' id='vo'>
-		<a href="__APP__/Repository/repository?{$vo.path}">{$vo.name}</a><br>
+	~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	<h4>{$vo.commit_msg}</h4>
+	<h7>{$vo.commitor} authored at {$vo.time}</h7>
+	<h5><a href="__APP__/Repository/commit?commit={$vo.SHA_1}">{$vo.SHA_1}</a></h5>
 	</volist>
 </body>
 </html>

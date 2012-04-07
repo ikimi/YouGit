@@ -5,11 +5,14 @@
 </head>
 <body>
 	<a href='__APP__/Settings/profile'>Account Settings</a><br>
-	<a href='__APP__/Index/logout'>Logout</a><br>
-	<a href='__APP__/Repository/create'>Create Repository</a><br>
+	<a href='__APP__/Index/logout'>Logout</a><br><br>
+	<a href='__APP__/Repository/admin'>admin</a><br>
+	<a href="http://{$info.homepage}">{$info.homepage}</a><br>
+	<br>-----------------------------------------<br>
+	<a href="__APP__/Repository/index?project={$info.project}">Files</a>&nbsp<a
+		href='__APP__/Repository/commits'>Commits</a>
+	<br>-----------------------------------------<br>
 <h5>{$info.project}/</h5>
-<a href='__APP__/Repository/admin'>admin</a><br>
-<a href="http://{$info.homepage}">{$info.homepage}</a><br>
 {$info.description}<br>
 <volist name='data' id='vo'>
 <a href="__APP__/Repository/repository?{$vo.path}">{$vo.name}</a><br>

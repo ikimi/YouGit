@@ -97,6 +97,7 @@ class RepositoryAction extends CommonAction {
 				$temp['name'] = $value;
 				$data[] = $temp;
 			}
+			$this->assign('project',$_GET['project']);
 			$this->assign('path',$_GET['project'].'/'.$_GET['tree']);
 			$this->assign('data',$data);
 			$this->display('repository');
@@ -177,6 +178,43 @@ class RepositoryAction extends CommonAction {
 			}
 			$this->redirect('admin');
 		}
+	}
+
+	/**
+	 * ----------------------------------------------------------
+	 * 项目提交历史
+	 * ----------------------------------------------------------
+	 */
+	public function commits () {
+		$repo = RepositoryModel::getInstance($_COOKIE['project']);
+		$this->assign('project',$_COOKIE['project']);
+
+//		var_dump($repo->getUpdate());
+		$this->assign('data',$repo->getUpdate());
+		$this->display('commits');
+	}
+
+	/**
+	 * ----------------------------------------------------------
+	 * 此次提交的更改信息
+	 * ----------------------------------------------------------
+	 */
+	public function commit() {
+		$commit = $_GET['commit'];
+		//echo $commit;
+		
+		$com = M('commit');
+		$parent = $com->where("SHA_1='$commit'")->field('parent')->find();
+		// $parent['parent']
+		$father = $parent['parent'];
+	//	var_dump($parent);
+		$result = array();
+
+		// 执行 git diff --stat 脚本
+		exec("/bin/bash /var/www/YouGit/script/diff.sh $parent $commit 1",$result);
+		var_dump($result);
+
+	//	$this->display("commit?commit=$commit");
 	}
 
 	/**
