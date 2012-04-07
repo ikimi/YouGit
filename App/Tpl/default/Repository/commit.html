@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>YouGit</title>
+</head>
+<body>
+	<a href='__APP__/Settings/profile'>Account Settings</a><br>
+	<a href='__APP__/Index/logout'>Logout</a><br><br>
+	<a href='__APP__/Repository/admin'>admin</a><br>
+	<br>-----------------------------------------<br>
+	<a href="__APP__/Repository/index?project={$project}">Files</a>&nbsp<a href='__APP__/Repository/commits'>Commits</a>
+	<br>-----------------------------------------<br>
+	<h4>{$info.commit_msg}</h4>
+	<h7>{$info.commitor} {$info.time}</h7><br>
+	parent <a href="__APP__/Repository/commit?commit={$info.parent}">{$info.parent}</a> commit <a href="__APP__/Repository/commit?commit={$info.SHA_1}">{$info.SHA_1}</a>
+	<br>-----------------------------------------<br>
+	<volist name='data' id='vo'>
+	{$vo.file}&nbsp{$vo.info}<br>
+	</volist>
+	{$msg}
+	<br>-----------------------------------------<br>
+</body>
+</html>

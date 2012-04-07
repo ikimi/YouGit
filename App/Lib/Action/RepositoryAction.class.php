@@ -201,20 +201,41 @@ class RepositoryAction extends CommonAction {
 	 */
 	public function commit() {
 		$commit = $_GET['commit'];
-		//echo $commit;
-		
+
 		$com = M('commit');
-		$parent = $com->where("SHA_1='$commit'")->field('parent')->find();
-		// $parent['parent']
-		$father = $parent['parent'];
-	//	var_dump($parent);
+		$project = $_COOKIE['project'];
+		$info = $com->where("SHA_1='$commit'")->field('SHA_1,parent,commitor,time,commit_msg')->find();
+		$father = $info['parent'];
 		$result = array();
+		/*
+		 *  执行 git diff --stat 脚本
+		 *  project 项目名称
+		 *  father 旧提交
+		 *  commit 新提交
+		 *  0 不加 --stat 选项
+		 *  1 加 --stat 选项
+		 */
+		exec("/bin/bash /var/www/YouGit/script/diff.sh $project $father $commit 1",$result);
+		$len = count($result);
+		$data = array();
+		for($i = 0;$i < $len-1;$i++) {
+			list($temp['file'],$temp['info']) = explode('|',$result[$i]);
+			$temp['file'] = trim($temp['file']);
+			$temp['info'] = trim($temp['info']);
+			$data[] = $temp;
+		}
 
-		// 执行 git diff --stat 脚本
-		exec("/bin/bash /var/www/YouGit/script/diff.sh $parent $commit 1",$result);
+		// 文件差异对比
+		unset($result);
+		$result = array();
+		exec("/bin/bash /var/www/YouGit/script/diff.sh  $project $father $commit 0",$result);
 		var_dump($result);
-
-	//	$this->display("commit?commit=$commit");
+		//		var_dump($data);
+		$this->assign('project',$_COOKIE['project']);
+		$this->assign('info',$info);
+		$this->assign('data',$data);
+		$this->assign('msg',$result[$len-1]);
+//		$this->display("commit");
 	}
 
 	/**
